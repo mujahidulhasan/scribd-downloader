@@ -1,45 +1,39 @@
 async function startDownload() {
-    const urlInput = document.getElementById('url');
+    const url = document.getElementById('url').value;
     const status = document.getElementById('status');
-    const btn = document.querySelector('button');
-
-    if (!urlInput.value) return alert("URL দিন!");
-
-    btn.disabled = true;
-    status.innerText = "সার্ভার থেকে ডেটা আনা হচ্ছে...";
+    
+    status.innerHTML = "🔍 স্ক্রিবড থেকে ডেটা আনা হচ্ছে...";
 
     try {
-        const response = await fetch('/get-source', {
+        const res = await fetch('/api/fetch', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: urlInput.value })
+            body: JSON.stringify({ url })
         });
-        const data = await response.json();
+        const data = await res.json();
 
-        if (data.success) {
-            status.innerText = "PDF তৈরি হচ্ছে... (অপেক্ষা করুন)";
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
+        if (!data.success) throw new Error(data.error);
 
-            for (let i = 0; i < data.pages.length; i++) {
-                const img = new Image();
-                img.src = data.pages[i];
-                img.crossOrigin = "anonymous";
-                await new Promise(r => img.onload = r);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
 
-                if (i > 0) pdf.addPage();
-                pdf.addImage(img, 'JPEG', 0, 0, 210, 297);
-                status.innerText = `প্রসেসিং: ${Math.round(((i + 1) / data.pages.length) * 100)}%`;
-            }
+        for (let i = 0; i < data.pages.length; i++) {
+            status.innerHTML = `⏳ পেজ প্রসেসিং হচ্ছে: ${i + 1} / ${data.pages.length}`;
+            
+            const img = new Image();
+            // আমরা সরাসরি আমাদের প্রক্সি এপিআই ব্যবহার করছি
+            img.src = `/api/proxy?img=${encodeURIComponent(data.pages[i])}`;
+            img.crossOrigin = "anonymous";
 
-            pdf.save('Document.pdf');
-            status.innerText = "ডাউনলোড সম্পন্ন!";
-        } else {
-            status.innerText = "ত্রুটি: " + data.error;
+            await new Promise(resolve => img.onload = resolve);
+
+            if (i > 0) pdf.addPage();
+            pdf.addImage(img, 'JPEG', 0, 0, 210, 297);
         }
+
+        pdf.save(`Scribd_Downloader_${data.docId}.pdf`);
+        status.innerHTML = "✅ ডাউনলোড সফল হয়েছে!";
     } catch (err) {
-        status.innerText = "সার্ভারে কানেক্ট করা যাচ্ছে না।";
-    } finally {
-        btn.disabled = false;
+        status.innerHTML = "❌ ভুল: " + err.message;
     }
 }
