@@ -1,15 +1,10 @@
-:root { --primary: #1a73e8; --bg: #f8f9fa; }
-body { background: var(--bg); margin: 0; font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-.app-container { width: 95%; max-width: 450px; text-align: center; }
-header h1 { color: var(--primary); font-size: 1.8rem; margin: 0; }
-header p { color: #666; font-size: 0.9rem; }
-.card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin-top: 20px; }
-input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; transition: 0.3s; }
-input:focus { border-color: var(--primary); }
-button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+body { background: #f4f7f9; font-family: sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.card { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; }
+h2 { color: #1a73e8; margin-bottom: 20px; }
+input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
+button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 button:disabled { background: #ccc; }
 .hidden { display: none; }
-#progress-section { margin-top: 25px; }
-.progress-bar { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
-#bar-fill { background: var(--primary); height: 100%; width: 0%; transition: 0.3s; }
+.progress-bar { background: #eee; height: 10px; border-radius: 5px; margin-top: 20px; overflow: hidden; }
+#bar-fill { background: #1a73e8; height: 100%; width: 0%; transition: 0.2s; }
 #status-text { font-size: 13px; color: #555; margin-top: 10px; }
