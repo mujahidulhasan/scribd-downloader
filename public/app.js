@@ -1,14 +1,12 @@
 async function handleDownload() {
     const url = document.getElementById('scribdUrl').value;
-    const dlBtn = document.getElementById('dlBtn');
     const statusText = document.getElementById('status-text');
     const barFill = document.getElementById('bar-fill');
+    
+    if(!url) return alert("লিঙ্ক দিন!");
 
-    if (!url) return alert("লিঙ্ক দিন!");
-
-    dlBtn.disabled = true;
-    document.getElementById('progress-container').classList.remove('hidden');
-    statusText.innerText = "সার্ভার থেকে ৫০+ পেজের লিঙ্ক খোঁজা হচ্ছে...";
+    document.getElementById('progress-container').style.display = 'block';
+    statusText.innerText = "🔍 স্ক্রলিং এবং পেজ ডিটেকশন চলছে (১-২ মিনিট লাগতে পারে)...";
 
     try {
         const res = await fetch('/api/fetch', {
@@ -17,43 +15,33 @@ async function handleDownload() {
             body: JSON.stringify({ url })
         });
         const data = await res.json();
-
         if (!data.success) throw new Error(data.error);
 
+        const { PDFDocument } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
         const total = data.pages.length;
-        statusText.innerText = `মোট ${total} টি পেজ পাওয়া গেছে। প্রসেসিং শুরু হচ্ছে...`;
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
 
         for (let i = 0; i < total; i++) {
-            // প্রোগ্রেস আপডেট
-            const progress = Math.round(((i + 1) / total) * 100);
-            barFill.style.width = progress + '%';
-            statusText.innerText = `পেজ প্রসেস হচ্ছে: ${i + 1} / ${total}`;
+            statusText.innerText = `📄 পেজ কনভার্ট হচ্ছে: ${i + 1} / ${total}`;
+            barFill.style.width = `${((i + 1) / total) * 100}%`;
 
-            const img = new Image();
-            img.src = `/api/proxy?imgUrl=${encodeURIComponent(data.pages[i])}`;
-            img.crossOrigin = "anonymous";
-
-            // ইমেজ লোড হওয়া পর্যন্ত অপেক্ষা
-            await new Promise((resolve) => {
-                img.onload = resolve;
-                img.onerror = resolve; // কোনো পেজ এরর দিলে স্কিপ করবে
-                setTimeout(resolve, 10000); // ১০ সেকেন্ড টাইমআউট
-            });
-
-            if (img.complete && img.naturalWidth > 0) {
-                if (i > 0) pdf.addPage();
-                pdf.addImage(img, 'JPEG', 0, 0, 210, 297);
-            }
+            const imgResp = await fetch(`/api/proxy?imgUrl=${encodeURIComponent(data.pages[i])}`);
+            const imgBytes = await imgResp.arrayBuffer();
+            const img = await pdfDoc.embedJpg(imgBytes);
+            
+            const page = pdfDoc.addPage([img.width, img.height]);
+            page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
         }
 
-        pdf.save(`Scribd_Document_${data.docId}.pdf`);
-        statusText.innerText = "ডাউনলোড সফল হয়েছে!";
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Scribd_Document_${data.docId}.pdf`;
+        link.click();
+        
+        statusText.innerText = "✅ ডাউনলোড সফল হয়েছে!";
     } catch (err) {
-        statusText.innerText = "ভুল: " + err.message;
-    } finally {
-        dlBtn.disabled = false;
+        statusText.innerText = "❌ ভুল: " + err.message;
     }
 }
