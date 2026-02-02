@@ -1,7 +1,6 @@
 {
-  "name": "scribd-downloader",
+  "name": "scribd-downloader-pro",
   "version": "1.0.0",
-  "description": "Scribd document to PDF downloader",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
