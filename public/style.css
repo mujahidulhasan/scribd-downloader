@@ -1,10 +1,11 @@
-body { background: #f4f7f9; font-family: sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-.card { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; }
-h2 { color: #1a73e8; margin-bottom: 20px; }
-input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
-button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+body { background: #f0f2f5; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+.card { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
+h1 { color: #1a73e8; margin: 0 0 10px; }
+p { color: #666; margin-bottom: 20px; }
+input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; margin-bottom: 15px; outline: none; }
+button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 button:disabled { background: #ccc; }
 .hidden { display: none; }
 .progress-bar { background: #eee; height: 10px; border-radius: 5px; margin-top: 20px; overflow: hidden; }
-#bar-fill { background: #1a73e8; height: 100%; width: 0%; transition: 0.2s; }
+#bar-fill { background: #1a73e8; height: 100%; width: 0%; transition: 0.3s; }
 #status-text { font-size: 13px; color: #555; margin-top: 10px; }
