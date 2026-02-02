@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribd Full PDF Downloader</title>
+    <title>Scribd Pro Downloader</title>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="card">
-        <h1>Scribd Pro</h1>
-        <p>৫০+ পেজের ডকুমেন্ট ডাউনলোডার</p>
-        
-        <input type="text" id="scribdUrl" placeholder="লিঙ্কটি পেস্ট করুন...">
-        <button id="dlBtn" onclick="handleDownload()">PDF ডাউনলোড করুন</button>
-
-        <div id="progress-container" class="hidden">
-            <div class="progress-bar">
-                <div id="bar-fill"></div>
-            </div>
-            <p id="status-text">লিঙ্ক প্রসেস হচ্ছে...</p>
+        <h2>Scribd Downloader Pro</h2>
+        <p>৫০+ পেজ অটো-স্ক্রলিং সাপোর্ট সহ</p>
+        <input type="text" id="scribdUrl" placeholder="ডকুমেন্টের লিঙ্ক এখানে দিন">
+        <button onclick="handleDownload()">ডাউনলোড শুরু করুন</button>
+        <div id="progress-container" style="display:none; margin-top:20px;">
+            <div class="bar"><div id="bar-fill"></div></div>
+            <p id="status-text"></p>
         </div>
     </div>
     <script src="app.js"></script>
