@@ -3,13 +3,12 @@ async function handleDownload() {
     const dlBtn = document.getElementById('dlBtn');
     const statusText = document.getElementById('status-text');
     const barFill = document.getElementById('bar-fill');
-    const progressContainer = document.getElementById('progress-container');
 
-    if (!url) return alert("URL দিন!");
+    if (!url) return alert("লিঙ্ক দিন!");
 
     dlBtn.disabled = true;
-    progressContainer.classList.remove('hidden');
-    statusText.innerText = "সার্ভার থেকে সব পেজের লিঙ্ক আনা হচ্ছে...";
+    document.getElementById('progress-container').classList.remove('hidden');
+    statusText.innerText = "সার্ভার থেকে ৫০+ পেজের লিঙ্ক খোঁজা হচ্ছে...";
 
     try {
         const res = await fetch('/api/fetch', {
@@ -22,10 +21,13 @@ async function handleDownload() {
         if (!data.success) throw new Error(data.error);
 
         const total = data.pages.length;
+        statusText.innerText = `মোট ${total} টি পেজ পাওয়া গেছে। প্রসেসিং শুরু হচ্ছে...`;
+
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
 
         for (let i = 0; i < total; i++) {
+            // প্রোগ্রেস আপডেট
             const progress = Math.round(((i + 1) / total) * 100);
             barFill.style.width = progress + '%';
             statusText.innerText = `পেজ প্রসেস হচ্ছে: ${i + 1} / ${total}`;
@@ -34,22 +36,21 @@ async function handleDownload() {
             img.src = `/api/proxy?imgUrl=${encodeURIComponent(data.pages[i])}`;
             img.crossOrigin = "anonymous";
 
+            // ইমেজ লোড হওয়া পর্যন্ত অপেক্ষা
             await new Promise((resolve) => {
                 img.onload = resolve;
-                img.onerror = resolve; // কোনো ইমেজ মিস হলে স্কিপ করবে
-                setTimeout(resolve, 10000); // ১০ সেকেন্ড ওয়েট
+                img.onerror = resolve; // কোনো পেজ এরর দিলে স্কিপ করবে
+                setTimeout(resolve, 10000); // ১০ সেকেন্ড টাইমআউট
             });
 
             if (img.complete && img.naturalWidth > 0) {
                 if (i > 0) pdf.addPage();
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                pdf.addImage(img, 'JPEG', 0, 0, pageWidth, pageHeight);
+                pdf.addImage(img, 'JPEG', 0, 0, 210, 297);
             }
         }
 
         pdf.save(`Scribd_Document_${data.docId}.pdf`);
-        statusText.innerText = "ডাউনলোড সম্পন্ন হয়েছে!";
+        statusText.innerText = "ডাউনলোড সফল হয়েছে!";
     } catch (err) {
         statusText.innerText = "ভুল: " + err.message;
     } finally {
