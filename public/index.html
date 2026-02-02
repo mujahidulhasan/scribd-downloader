@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribd PDF Downloader</title>
+    <title>Scribd Full PDF Downloader</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <h1>Scribd Downloader</h1>
-            <p>আনলিমিটেড পেজ ডাউনলোড করুন একদম ফ্রিতে</p>
-        </header>
+    <div class="card">
+        <h1>Scribd Pro</h1>
+        <p>৫০+ পেজের ডকুমেন্ট ডাউনলোডার</p>
+        
+        <input type="text" id="scribdUrl" placeholder="লিঙ্কটি পেস্ট করুন...">
+        <button id="dlBtn" onclick="handleDownload()">PDF ডাউনলোড করুন</button>
 
-        <main class="card">
-            <div class="input-box">
-                <input type="text" id="scribdUrl" placeholder="Scribd ডকুমেন্টের লিঙ্ক পেস্ট করুন">
-                <button id="dlBtn" onclick="handleDownload()">ডাউনলোড শুরু করুন</button>
+        <div id="progress-container" class="hidden">
+            <div class="progress-bar">
+                <div id="bar-fill"></div>
             </div>
-
-            <div id="progress-section" class="hidden">
-                <div class="progress-bar">
-                    <div id="bar-fill"></div>
-                </div>
-                <p id="status-text">প্রস্তুত হচ্ছে...</p>
-            </div>
-        </main>
-        <footer>
-            <p>&copy; 2026 Scribd টুলস</p>
-        </footer>
+            <p id="status-text">লিঙ্ক প্রসেস হচ্ছে...</p>
+        </div>
     </div>
     <script src="app.js"></script>
 </body>
