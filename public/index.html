@@ -3,73 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribd Free Downloader</title>
+    <title>Free Scribd Downloader</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 90%; max-width: 450px; }
-        h2 { color: #1a73e8; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #1557b0; }
-        #status { margin-top: 15px; font-size: 14px; color: #555; }
-    </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Scribd Downloader</h2>
-        <p>ডকুমেন্টের লিংকটি নিচে পেস্ট করুন</p>
-        <input type="text" id="scribdUrl" placeholder="https://www.scribd.com/document/...">
-        <button onclick="processDoc()">ডাউনলোড শুরু করুন</button>
-        <div id="status"></div>
+    <div class="main-card">
+        <h1>Scribd Downloader</h1>
+        <p>যেকোনো Scribd ডকুমেন্ট PDF হিসেবে ফ্রিতে ডাউনলোড করুন</p>
+        
+        <div class="input-group">
+            <input type="text" id="scribdUrl" placeholder="https://www.scribd.com/document/...">
+            <button id="dlBtn" onclick="startDownload()">ডাউনলোড করুন</button>
+        </div>
+
+        <div id="status-box" style="display: none;">
+            <div class="spinner"></div>
+            <p id="status-text">প্রসেসিং হচ্ছে...</p>
+        </div>
     </div>
-
-    <script>
-        async function processDoc() {
-            const url = document.getElementById('scribdUrl').value;
-            const status = document.getElementById('status');
-            if(!url) return alert("লিংক দিন!");
-
-            status.innerText = "সার্ভারের সাথে কানেক্ট হচ্ছে...";
-            
-            try {
-                const res = await fetch('/fetch-scribd', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ url })
-                });
-                const data = await res.json();
-
-                if (!data.success) throw new Error(data.error);
-
-                status.innerText = "পেজগুলো থেকে PDF তৈরি হচ্ছে (এটি ১-২ মিনিট নিতে পারে)...";
-                await generatePDF(data.pages);
-                status.innerText = "ডাউনলোড সফল হয়েছে!";
-            } catch (err) {
-                status.innerText = "ভুল: " + err.message;
-            }
-        }
-
-        async function generatePDF(pages) {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-
-            for (let i = 0; i < pages.length; i++) {
-                const img = new Image();
-                img.src = pages[i];
-                img.crossOrigin = "Anonymous"; 
-                await new Promise(resolve => {
-                    img.onload = resolve;
-                    img.onerror = resolve; // Skip failed images
-                });
-
-                if (i > 0) pdf.addPage();
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                pdf.addImage(img, 'JPEG', 0, 0, pageWidth, pageHeight);
-            }
-            pdf.save("Scribd_Downloaded.pdf");
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
